@@ -1,21 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-
-enum Filter {
-  All,
-  Completed,
-  Pending,
-}
-
-enum TodoState {
-  Completed,
-  Pending,
-}
-
-interface Todo {
-  title: string;
-  state: TodoState;
-}
+import { Todo, TodoElement, TodoState } from "./components/TodoElelement";
+import { Filter, FilterButton } from "./components/FilterButton";
 
 function App() {
   const [filter, setFilter] = useState<Filter>(Filter.All);
@@ -59,9 +45,9 @@ function App() {
         </button>
       </div>
       <div>
-        <button onClick={() => setFilter(Filter.All)}>All</button>
-        <button onClick={() => setFilter(Filter.Completed)}>Completed</button>
-        <button onClick={() => setFilter(Filter.Pending)}>Pending</button>
+        <FilterButton filter={Filter.All} setFilter={setFilter} />
+        <FilterButton filter={Filter.Completed} setFilter={setFilter} />
+        <FilterButton filter={Filter.Pending} setFilter={setFilter} />
       </div>
       <ul>
         {todos
@@ -75,23 +61,13 @@ function App() {
                 return x.state === TodoState.Pending;
             }
           })
-          .map((x, index) => (
-            <li key={`${index}-${x.title}`}>
-              <span
-                onClick={() =>
-                  updateTodo(
-                    index,
-                    x.state === TodoState.Completed
-                      ? TodoState.Pending
-                      : TodoState.Completed
-                  )
-                }
-                className={x.state === TodoState.Completed ? "done" : ""}
-              >
-                {x.title}
-              </span>
-              <button onClick={() => deleteTodo(index)}>Delete</button>
-            </li>
+          .map((todo, index) => (
+            <TodoElement
+              todo={todo}
+              index={index}
+              updateTodo={updateTodo}
+              deleteTodo={deleteTodo}
+            />
           ))}
       </ul>
     </>
